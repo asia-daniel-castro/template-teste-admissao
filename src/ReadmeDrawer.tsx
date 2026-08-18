@@ -1,6 +1,27 @@
-import { useState, type ReactNode } from 'react';
+import {
+  useEffect,
+  useRef,
+  useState,
+  type PointerEvent as ReactPointerEvent,
+  type ReactNode,
+} from 'react';
 import { FileText, ChevronDown, ChevronUp } from 'lucide-react';
 import readmeContent from '../README.md?raw';
+
+const MIN_HEIGHT = 160;
+const EDGE_MARGIN = 160;
+const HEIGHT_STORAGE_KEY = 'readme-drawer-height';
+
+function getMaxHeight() {
+  return window.innerHeight - EDGE_MARGIN;
+}
+
+function getInitialHeight() {
+  const stored = Number(localStorage.getItem(HEIGHT_STORAGE_KEY));
+  const fallback = Math.round(window.innerHeight * 0.55);
+  const initial = stored > 0 ? stored : fallback;
+  return Math.min(Math.max(initial, MIN_HEIGHT), getMaxHeight());
+}
 
 interface ListItem {
   text: string;
@@ -235,10 +256,46 @@ function renderBlocks(blocks: Block[]) {
 
 export function ReadmeDrawer() {
   const [open, setOpen] = useState(true);
+  const [height, setHeight] = useState(getInitialHeight);
+  const [dragging, setDragging] = useState(false);
+  const dragStart = useRef({ y: 0, height: 0 });
   const blocks = parseBlocks(readmeContent);
 
+  useEffect(() => {
+    if (!dragging) return;
+
+    function handlePointerMove(e: PointerEvent) {
+      const delta = dragStart.current.y - e.clientY;
+      const next = dragStart.current.height + delta;
+      setHeight(Math.min(Math.max(next, MIN_HEIGHT), getMaxHeight()));
+    }
+
+    function handlePointerUp() {
+      setDragging(false);
+      setHeight((current) => {
+        localStorage.setItem(HEIGHT_STORAGE_KEY, String(current));
+        return current;
+      });
+    }
+
+    window.addEventListener('pointermove', handlePointerMove);
+    window.addEventListener('pointerup', handlePointerUp);
+    return () => {
+      window.removeEventListener('pointermove', handlePointerMove);
+      window.removeEventListener('pointerup', handlePointerUp);
+    };
+  }, [dragging]);
+
+  function handleDragStart(e: ReactPointerEvent) {
+    dragStart.current = { y: e.clientY, height };
+    setDragging(true);
+  }
+
   return (
-    <div className="fixed bottom-0 left-16 right-0 z-40 flex flex-col bg-slate-900 border-t border-slate-800 shadow-[0_-8px_24px_rgba(0,0,0,0.35)]">
+    <div
+      className="fixed bottom-0 left-16 right-0 z-40 flex flex-col bg-slate-900 border-t border-slate-800 shadow-[0_-8px_24px_rgba(0,0,0,0.35)]"
+      style={dragging ? { cursor: 'row-resize', userSelect: 'none' } : undefined}
+    >
       <button
         onClick={() => setOpen((v) => !v)}
         aria-expanded={open}
@@ -256,11 +313,22 @@ export function ReadmeDrawer() {
       </button>
 
       {open && (
-        <div className="max-h-[55vh] overflow-y-auto border-t border-slate-800 px-8 py-6">
-          <article className="mx-auto max-w-3xl text-sm leading-relaxed text-slate-300">
-            {renderBlocks(blocks)}
-          </article>
-        </div>
+        <>
+          <div
+            onPointerDown={handleDragStart}
+            className="group relative h-2 w-full shrink-0 cursor-row-resize border-t border-slate-800"
+          >
+            <div className="absolute left-1/2 top-1/2 h-1 w-10 -translate-x-1/2 -translate-y-1/2 rounded-full bg-slate-700 transition-colors group-hover:bg-blue-400" />
+          </div>
+          <div
+            style={{ height }}
+            className="overflow-y-auto px-8 pb-6 pt-2"
+          >
+            <article className="mx-auto max-w-3xl text-sm leading-relaxed text-slate-300">
+              {renderBlocks(blocks)}
+            </article>
+          </div>
+        </>
       )}
     </div>
   );
