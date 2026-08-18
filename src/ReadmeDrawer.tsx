@@ -254,12 +254,14 @@ function renderBlocks(blocks: Block[]) {
   });
 }
 
-export function ReadmeDrawer() {
+export function ReadmeDrawer({ loggedIn }: { loggedIn: boolean }) {
   const [open, setOpen] = useState(true);
   const [height, setHeight] = useState(getInitialHeight);
   const [dragging, setDragging] = useState(false);
   const dragStart = useRef({ y: 0, height: 0 });
   const blocks = parseBlocks(readmeContent);
+
+  const fullScreen = open && !loggedIn;
 
   useEffect(() => {
     if (!dragging) return;
@@ -293,7 +295,13 @@ export function ReadmeDrawer() {
 
   return (
     <div
-      className="fixed bottom-0 left-16 right-0 z-40 flex flex-col bg-slate-900 border-t border-slate-800 shadow-[0_-8px_24px_rgba(0,0,0,0.35)]"
+      className={
+        fullScreen
+          ? 'fixed inset-0 z-50 flex flex-col bg-slate-900'
+          : `fixed bottom-0 right-0 z-40 flex flex-col bg-slate-900 border-t border-slate-800 shadow-[0_-8px_24px_rgba(0,0,0,0.35)] ${
+              loggedIn ? 'left-16' : 'left-0'
+            }`
+      }
       style={dragging ? { cursor: 'row-resize', userSelect: 'none' } : undefined}
     >
       <button
@@ -303,7 +311,9 @@ export function ReadmeDrawer() {
       >
         <span className="flex items-center gap-2">
           <FileText className="h-4 w-4 text-blue-400" />
-          Instruções do teste (README)
+          {loggedIn
+            ? 'Instruções do teste (README)'
+            : 'Leia as instruções antes de começar'}
         </span>
         {open ? (
           <ChevronDown className="h-4 w-4 text-slate-400" />
@@ -314,15 +324,21 @@ export function ReadmeDrawer() {
 
       {open && (
         <>
+          {!fullScreen && (
+            <div
+              onPointerDown={handleDragStart}
+              className="group relative h-2 w-full shrink-0 cursor-row-resize border-t border-slate-800"
+            >
+              <div className="absolute left-1/2 top-1/2 h-1 w-10 -translate-x-1/2 -translate-y-1/2 rounded-full bg-slate-700 transition-colors group-hover:bg-blue-400" />
+            </div>
+          )}
           <div
-            onPointerDown={handleDragStart}
-            className="group relative h-2 w-full shrink-0 cursor-row-resize border-t border-slate-800"
-          >
-            <div className="absolute left-1/2 top-1/2 h-1 w-10 -translate-x-1/2 -translate-y-1/2 rounded-full bg-slate-700 transition-colors group-hover:bg-blue-400" />
-          </div>
-          <div
-            style={{ height }}
-            className="overflow-y-auto px-8 pb-6 pt-2"
+            style={fullScreen ? undefined : { height }}
+            className={
+              fullScreen
+                ? 'flex-1 overflow-y-auto border-t border-slate-800 px-8 pb-10 pt-6'
+                : 'overflow-y-auto px-8 pb-6 pt-2'
+            }
           >
             <article className="mx-auto max-w-3xl text-sm leading-relaxed text-slate-300">
               {renderBlocks(blocks)}

@@ -83,10 +83,16 @@ não é necessário instalar nada localmente.
 
 ### Antes de começar: conecte sua conta do GitHub
 
-Clique em **Sign in** no canto superior direito do StackBlitz e entre
-com sua conta do GitHub. Isso salva o projeto na sua conta com uma URL
-permanente — **é esse link que você vai nos enviar ao final**, então
-não pule esse passo.
+Clique em **Sign in** no canto superior direito do StackBlitz:
+
+![Botão Sign in no canto superior direito do StackBlitz](public/stackblitz-signin-1.png)
+
+Na janela que abrir, escolha **Continue with GitHub**:
+
+![Opção Continue with GitHub na janela de login do StackBlitz](public/stackblitz-signin-2.png)
+
+Isso salva o projeto na sua conta com uma URL permanente — **é esse
+link que você vai nos enviar ao final**, então não pule esse passo.
 
 Um cronômetro no topo da tela mostra o tempo restante assim que você
 entra com seu nome na tela de login do próprio app.
@@ -108,3 +114,6 @@ nenhum repositório à parte.
 
 Qualquer dúvida sobre o enunciado, pergunte antes de começar — faz parte
 do processo. Boa sorte!
+
+**Agora basta minimizar esta janela, preencher seu nome e iniciar o
+teste. Estas instruções poderão ser acessadas durante todo o teste.**
