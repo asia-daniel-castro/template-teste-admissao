@@ -1,7 +1,9 @@
 # Teste Técnico — Estágio Frontend
 
-Bem-vindo(a)! Este teste avalia como você lê um layout de referência,
-integra uma API real e organiza componentes React com TypeScript.
+Bem-vindo(a)! Este teste avalia suas capacidades de leitura e impletementação um layout de referência,
+integração de uma API real e organização de componentes React com TypeScript. 
+
+O uso de IA é amplamente incentivado, afinal o tempo disponível para desenvolver esta tarefa é de 45 minutos.
 
 ## O que já está pronto
 
@@ -36,14 +38,8 @@ O resultado esperado, reproduzindo o layout abaixo, é:
 
 CNPJ usado no print acima (para você testar): `33.000.167/0001-01`.
 
-### Requisitos funcionais
+### Requisitos obrigatórios
 
-- **Máscara/formatação** do CNPJ enquanto o usuário digita (`00.000.000/0000-00`).
-- **Validação**: se o CNPJ não tiver 14 dígitos, exibir uma mensagem de erro
-  sem chamar a API.
-- **Estado de carregamento** no botão "Buscar" enquanto a requisição está em andamento.
-- **Estado de erro**: se a API retornar erro (CNPJ inválido, inexistente,
-  fora do ar), exibir uma mensagem amigável.
 - **Card de resultado** com, no mínimo:
   - Razão social, nome fantasia e situação cadastral (com destaque visual
     para ativa/inativa);
@@ -52,21 +48,29 @@ CNPJ usado no print acima (para você testar): `33.000.167/0001-01`.
   - Endereço completo, telefone e e-mail;
   - Quadro societário (nome e qualificação de cada sócio).
 
+### Funcionalidades adicionais
+
+- **Máscara/formatação** do CNPJ enquanto o usuário digita (`00.000.000/0000-00`).
+- **Validação**: se o CNPJ não tiver 14 dígitos, exibir uma mensagem de erro
+  sem chamar a API.
+- **Estado de carregamento** no botão "Buscar" enquanto a requisição está em andamento.
+- **Skeleton de carregamento** copiando o layout do quadro de resposta enquanto a requisição está em andamento.
+- **Estado de erro**: se a API retornar erro (CNPJ inválido, inexistente,
+  fora do ar), exibir uma mensagem amigável.
+
 ### O que avaliamos
 
 - Fidelidade ao layout de referência (não precisa ser pixel-perfect, mas
   a estrutura, hierarquia e uso de cores/ícones devem ser equivalentes).
 - Organização do código: componentes pequenos e coesos, tipagem correta
   em TypeScript (evite `any`).
-- Tratamento de estados (ocioso, carregando, erro, sucesso) e de casos de
-  borda (CNPJ inválido, sem nome fantasia, sem e-mail, etc.).
+- Tratamento de casos de borda (CNPJ inválido, sem nome fantasia, sem e-mail, etc.).
 - Uso correto de React (estado, formulários controlados, eventos).
-- Organização dos commits no Git (histórico legível, mensagens claras).
 
 Não é necessário:
 
 - Autenticação real, backend próprio ou persistência de dados.
-- Testes automatizados (é um diferencial, mas não obrigatório).
+- Testes automatizados.
 - Responsividade completa para mobile (o foco é desktop).
 
 ## Como rodar o projeto
@@ -76,22 +80,26 @@ npm install
 npm run dev
 ```
 
-Abra o endereço exibido no terminal (geralmente `http://localhost:5173`),
-digite qualquer nome na tela de login e você chegará na tela de busca.
+### Se você recebeu um link do StackBlitz
 
-Outros comandos úteis:
+Antes de começar a editar, conecte sua conta do GitHub clicando em
+**Sign in** no canto superior direito do StackBlitz. Sem isso, seu
+trabalho fica salvo só na sessão do navegador e pode se perder se a
+aba fechar — com a conta conectada, você consegue gerar um link
+permanente ou enviar o projeto para um repositório seu ao final.
 
-```bash
-npm run lint     # roda o Oxlint
-npm run build    # type-check (tsc) + build de produção
-```
+Um cronômetro no topo da tela mostra o tempo restante assim que você
+entra com seu nome.
 
 ## Como entregar
 
-1. Crie um repositório (pode ser um fork/cópia deste) e faça commits
+1. Se estiver no StackBlitz (com o GitHub conectado), use a opção de
+   conectar/enviar para um repositório seu, ou baixe o projeto como
+   `.zip` pelo menu do editor. Se estiver rodando localmente, crie um
+   repositório (pode ser um fork/cópia deste) e faça commits
    normalmente conforme for implementando.
-2. Ao concluir, envie o link do repositório (ou um `.zip`, se preferir)
-   para quem te passou este teste.
+2. Ao concluir, envie o link do repositório (ou o `.zip`) para quem te
+   passou este teste.
 3. Fique à vontade para descrever no próprio README, ou em uma mensagem
    junto da entrega, decisões que você tomou e o que faria diferente
    com mais tempo.

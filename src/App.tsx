@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Building2, LogOut } from 'lucide-react';
 import logo from './assets/logo.png';
 import { ReadmeDrawer } from './ReadmeDrawer';
+import { TestTimer } from './TestTimer';
 
 function Avatar({ name }: { name: string }) {
   const initials = name
@@ -82,6 +83,7 @@ function TopBar({ userName }: { userName: string }) {
           Plataforma de Teste
         </span>
       </div>
+      <TestTimer />
       <div className="flex items-center gap-2">
         <Avatar name={userName} />
         <span className="text-sm font-medium text-slate-200">{userName}</span>
