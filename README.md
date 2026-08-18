@@ -75,31 +75,31 @@ Não é necessário:
 
 ## Como rodar o projeto
 
-```bash
-npm install
-npm run dev
-```
+O link que você recebeu já abre o projeto rodando dentro do
+StackBlitz — instalação e servidor de desenvolvimento sobem sozinhos,
+não é necessário instalar nada localmente.
 
-### Se você recebeu um link do StackBlitz
+### Antes de começar: conecte sua conta do GitHub
 
-Antes de começar a editar, conecte sua conta do GitHub clicando em
-**Sign in** no canto superior direito do StackBlitz. Sem isso, seu
-trabalho fica salvo só na sessão do navegador e pode se perder se a
-aba fechar — com a conta conectada, você consegue gerar um link
-permanente ou enviar o projeto para um repositório seu ao final.
+Clique em **Sign in** no canto superior direito do StackBlitz e entre
+com sua conta do GitHub. Isso salva o projeto na sua conta com uma URL
+permanente — **é esse link que você vai nos enviar ao final**, então
+não pule esse passo.
 
 Um cronômetro no topo da tela mostra o tempo restante assim que você
-entra com seu nome.
+entra com seu nome na tela de login do próprio app.
 
 ## Como entregar
 
-1. Se estiver no StackBlitz (com o GitHub conectado), use a opção de
-   conectar/enviar para um repositório seu, ou baixe o projeto como
-   `.zip` pelo menu do editor. Se estiver rodando localmente, crie um
-   repositório (pode ser um fork/cópia deste) e faça commits
-   normalmente conforme for implementando.
-2. Ao concluir, envie o link do repositório (ou o `.zip`) para quem te
-   passou este teste.
+Todo o teste — do início à correção — acontece dentro do próprio
+StackBlitz. Não enviamos nem aceitamos `.zip`, e não é necessário criar
+nenhum repositório à parte.
+
+1. Confirme que você conectou sua conta do GitHub no StackBlitz (passo
+   acima) antes de começar a editar.
+2. Ao concluir (ou quando o tempo acabar), copie a URL do seu projeto
+   direto da barra de endereço do navegador e envie esse link para
+   quem te passou este teste.
 3. Fique à vontade para descrever no próprio README, ou em uma mensagem
    junto da entrega, decisões que você tomou e o que faria diferente
    com mais tempo.
