@@ -1,4 +1,4 @@
-# Teste Técnico — Estágio Frontend
+# Instruções Teste Técnico — Estágio
 
 Bem-vindo(a)! Este teste avalia suas capacidades de leitura e impletementação de um layout de referência,
 integração de uma API real e organização de componentes React com TypeScript. 
@@ -94,10 +94,14 @@ Na janela que abrir, escolha **Continue with GitHub**:
 Isso salva o projeto na sua conta com uma URL permanente — **é esse
 link que você vai nos enviar ao final**, então não pule esse passo.
 
-Depois de conectar, clique no título do projeto (no topo da tela,
-algo como "Template Teste Admissao (duplicated)") e **renomeie
-incluindo o seu nome**. Assim conseguimos identificar de quem é cada
-projeto quando ele aparecer para nós.
+Depois de conectar, clique na setinha ao lado do título do projeto
+(no topo da tela) para abrir o painel de configurações e **renomeie o
+campo "Title" incluindo o seu nome**:
+
+![Painel de configurações do projeto no StackBlitz, com o campo Title em destaque](public/stackblitz-signin-3.png)
+
+Assim conseguimos identificar de quem é cada projeto quando ele
+aparecer para nós.
 
 Um cronômetro no topo da tela mostra o tempo restante assim que você
 entra com seu nome na tela de login do próprio app.
