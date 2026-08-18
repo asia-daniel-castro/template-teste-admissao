@@ -1,9 +1,11 @@
 # Teste Técnico — Estágio Frontend
 
-Bem-vindo(a)! Este teste avalia suas capacidades de leitura e impletementação um layout de referência,
+Bem-vindo(a)! Este teste avalia suas capacidades de leitura e impletementação de um layout de referência,
 integração de uma API real e organização de componentes React com TypeScript. 
 
 O uso de IA é amplamente incentivado, afinal o tempo disponível para desenvolver esta tarefa é de 45 minutos.
+
+Na Asia apoiamos o Vibe Coding!
 
 ## O que já está pronto
 
@@ -21,7 +23,7 @@ Tudo isso está em [src/App.tsx](src/App.tsx).
 Dentro de `src/App.tsx`, no lugar do comentário:
 
 ```tsx
-{/* TODO candidato: renderizar aqui o resultado, reproduzindo o layout do print */}
+{/* TODO candidato: implementar aqui o código, reproduzindo o layout do print */}
 ```
 
 implemente a consulta de empresa por CNPJ, consumindo a
