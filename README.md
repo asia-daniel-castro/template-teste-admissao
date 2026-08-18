@@ -94,6 +94,11 @@ Na janela que abrir, escolha **Continue with GitHub**:
 Isso salva o projeto na sua conta com uma URL permanente — **é esse
 link que você vai nos enviar ao final**, então não pule esse passo.
 
+Depois de conectar, clique no título do projeto (no topo da tela,
+algo como "Template Teste Admissao (duplicated)") e **renomeie
+incluindo o seu nome**. Assim conseguimos identificar de quem é cada
+projeto quando ele aparecer para nós.
+
 Um cronômetro no topo da tela mostra o tempo restante assim que você
 entra com seu nome na tela de login do próprio app.
 
