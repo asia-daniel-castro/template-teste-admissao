@@ -1,15 +1,241 @@
-import { useState } from 'react';
-import ReactMarkdown from 'react-markdown';
+import { useState, type ReactNode } from 'react';
 import { FileText, ChevronDown, ChevronUp } from 'lucide-react';
 import readmeContent from '../README.md?raw';
 
-function resolveImageSrc(src?: string) {
-  if (!src) return src;
+interface ListItem {
+  text: string;
+  children: ListItem[];
+}
+
+type Block =
+  | { type: 'heading'; level: 1 | 2 | 3; text: string }
+  | { type: 'paragraph'; text: string }
+  | { type: 'code'; code: string }
+  | { type: 'list'; ordered: boolean; items: ListItem[] };
+
+function resolveImageSrc(src: string) {
   return src.startsWith('public/') ? `/${src.slice('public/'.length)}` : src;
+}
+
+function parseBlocks(markdown: string): Block[] {
+  const lines = markdown.replace(/\r\n?/g, '\n').split('\n');
+  const blocks: Block[] = [];
+  let i = 0;
+
+  while (i < lines.length) {
+    const startIndex = i;
+    const line = lines[i];
+
+    if (line.trim() === '') {
+      i++;
+      continue;
+    }
+
+    const fenceMatch = line.match(/^```(\w*)\s*$/);
+    if (fenceMatch) {
+      const codeLines: string[] = [];
+      i++;
+      while (i < lines.length && !/^```\s*$/.test(lines[i])) {
+        codeLines.push(lines[i]);
+        i++;
+      }
+      i++;
+      blocks.push({ type: 'code', code: codeLines.join('\n') });
+      continue;
+    }
+
+    const headingMatch = line.match(/^(#{1,3})\s+(.*)$/);
+    if (headingMatch) {
+      blocks.push({
+        type: 'heading',
+        level: headingMatch[1].length as 1 | 2 | 3,
+        text: headingMatch[2].trim(),
+      });
+      i++;
+      continue;
+    }
+
+    if (/^[-*]\s+/.test(line) || /^\d+\.\s+/.test(line)) {
+      const ordered = /^\d+\.\s+/.test(line);
+      const topRe = ordered ? /^\d+\.\s+(.*)$/ : /^[-*]\s+(.*)$/;
+      const nestedRe = /^\s+(?:[-*]|\d+\.)\s+(.*)$/;
+      const indentedRe = /^\s+(.*)$/;
+
+      const items: ListItem[] = [];
+      let currentTop: ListItem | null = null;
+      let currentChild: ListItem | null = null;
+
+      while (
+        i < lines.length &&
+        lines[i].trim() !== '' &&
+        !/^#{1,3}\s+/.test(lines[i]) &&
+        !lines[i].startsWith('```')
+      ) {
+        const current = lines[i];
+        let match: RegExpMatchArray | null;
+
+        if ((match = current.match(topRe))) {
+          currentTop = { text: match[1], children: [] };
+          items.push(currentTop);
+          currentChild = null;
+        } else if ((match = current.match(nestedRe))) {
+          currentChild = { text: match[1], children: [] };
+          currentTop?.children.push(currentChild);
+        } else if ((match = current.match(indentedRe))) {
+          const target = currentChild ?? currentTop;
+          if (target) target.text += ` ${match[1]}`;
+          else break;
+        } else {
+          break;
+        }
+        i++;
+      }
+
+      blocks.push({ type: 'list', ordered, items });
+      continue;
+    }
+
+    const paraLines: string[] = [];
+    while (
+      i < lines.length &&
+      lines[i].trim() !== '' &&
+      !/^#{1,3}\s+/.test(lines[i]) &&
+      !lines[i].startsWith('```') &&
+      !/^[-*]\s+/.test(lines[i]) &&
+      !/^\d+\.\s+/.test(lines[i])
+    ) {
+      paraLines.push(lines[i].trim());
+      i++;
+    }
+    blocks.push({ type: 'paragraph', text: paraLines.join(' ') });
+
+    if (i === startIndex) i++;
+  }
+
+  return blocks;
+}
+
+const INLINE_RE =
+  /!\[([^\]]*)\]\(([^)]+)\)|\[([^\]]*)\]\(([^)]+)\)|\*\*([^*]+)\*\*|`([^`]+)`/g;
+
+function renderInline(text: string): ReactNode[] {
+  const nodes: ReactNode[] = [];
+  let lastIndex = 0;
+  let key = 0;
+  let match: RegExpExecArray | null;
+
+  INLINE_RE.lastIndex = 0;
+  while ((match = INLINE_RE.exec(text))) {
+    if (match.index > lastIndex) nodes.push(text.slice(lastIndex, match.index));
+
+    if (match[1] !== undefined) {
+      nodes.push(
+        <img
+          key={key++}
+          src={resolveImageSrc(match[2])}
+          alt={match[1]}
+          className="my-3 max-w-full rounded-lg border border-slate-800"
+        />,
+      );
+    } else if (match[3] !== undefined) {
+      nodes.push(
+        <a
+          key={key++}
+          href={match[4]}
+          target="_blank"
+          rel="noreferrer"
+          className="text-blue-400 underline hover:text-blue-300"
+        >
+          {match[3]}
+        </a>,
+      );
+    } else if (match[5] !== undefined) {
+      nodes.push(
+        <strong key={key++} className="font-semibold text-white">
+          {match[5]}
+        </strong>,
+      );
+    } else if (match[6] !== undefined) {
+      nodes.push(
+        <code
+          key={key++}
+          className="rounded bg-slate-800 px-1.5 py-0.5 text-xs text-emerald-300"
+        >
+          {match[6]}
+        </code>,
+      );
+    }
+
+    lastIndex = INLINE_RE.lastIndex;
+  }
+
+  if (lastIndex < text.length) nodes.push(text.slice(lastIndex));
+  return nodes;
+}
+
+function renderListItems(items: ListItem[]) {
+  return items.map((item, index) => (
+    <li key={index}>
+      {renderInline(item.text)}
+      {item.children.length > 0 && (
+        <ul className="mt-1 list-disc space-y-1 pl-5">
+          {renderListItems(item.children)}
+        </ul>
+      )}
+    </li>
+  ));
+}
+
+const HEADING_CLASSES: Record<1 | 2 | 3, string> = {
+  1: 'mb-3 mt-0 text-xl font-bold text-white',
+  2: 'mb-2 mt-6 text-lg font-semibold text-white',
+  3: 'mb-2 mt-4 text-base font-semibold text-white',
+};
+
+function renderBlocks(blocks: Block[]) {
+  return blocks.map((block, index) => {
+    switch (block.type) {
+      case 'heading': {
+        const Tag = `h${block.level}` as 'h1' | 'h2' | 'h3';
+        return (
+          <Tag key={index} className={HEADING_CLASSES[block.level]}>
+            {renderInline(block.text)}
+          </Tag>
+        );
+      }
+      case 'paragraph':
+        return (
+          <p key={index} className="mb-3">
+            {renderInline(block.text)}
+          </p>
+        );
+      case 'code':
+        return (
+          <pre
+            key={index}
+            className="mb-3 overflow-x-auto rounded-lg border border-slate-800 bg-slate-950 p-3 text-xs"
+          >
+            <code>{block.code}</code>
+          </pre>
+        );
+      case 'list': {
+        const ListTag = block.ordered ? 'ol' : 'ul';
+        return (
+          <ListTag
+            key={index}
+            className={`mb-3 space-y-1 pl-5 ${block.ordered ? 'list-decimal' : 'list-disc'}`}
+          >
+            {renderListItems(block.items)}
+          </ListTag>
+        );
+      }
+    }
+  });
 }
 
 export function ReadmeDrawer() {
   const [open, setOpen] = useState(true);
+  const blocks = parseBlocks(readmeContent);
 
   return (
     <div className="fixed bottom-0 left-16 right-0 z-40 flex flex-col bg-slate-900 border-t border-slate-800 shadow-[0_-8px_24px_rgba(0,0,0,0.35)]">
@@ -32,73 +258,7 @@ export function ReadmeDrawer() {
       {open && (
         <div className="max-h-[55vh] overflow-y-auto border-t border-slate-800 px-8 py-6">
           <article className="mx-auto max-w-3xl text-sm leading-relaxed text-slate-300">
-            <ReactMarkdown
-              components={{
-                h1: ({ children }) => (
-                  <h1 className="mb-3 mt-0 text-xl font-bold text-white">
-                    {children}
-                  </h1>
-                ),
-                h2: ({ children }) => (
-                  <h2 className="mb-2 mt-6 text-lg font-semibold text-white">
-                    {children}
-                  </h2>
-                ),
-                h3: ({ children }) => (
-                  <h3 className="mb-2 mt-4 text-base font-semibold text-white">
-                    {children}
-                  </h3>
-                ),
-                p: ({ children }) => <p className="mb-3">{children}</p>,
-                ul: ({ children }) => (
-                  <ul className="mb-3 list-disc space-y-1 pl-5">{children}</ul>
-                ),
-                ol: ({ children }) => (
-                  <ol className="mb-3 list-decimal space-y-1 pl-5">
-                    {children}
-                  </ol>
-                ),
-                li: ({ children }) => <li>{children}</li>,
-                a: ({ href, children }) => (
-                  <a
-                    href={href}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="text-blue-400 underline hover:text-blue-300"
-                  >
-                    {children}
-                  </a>
-                ),
-                strong: ({ children }) => (
-                  <strong className="font-semibold text-white">
-                    {children}
-                  </strong>
-                ),
-                code: ({ className, children }) =>
-                  className ? (
-                    <code className="text-xs">{children}</code>
-                  ) : (
-                    <code className="rounded bg-slate-800 px-1.5 py-0.5 text-xs text-emerald-300">
-                      {children}
-                    </code>
-                  ),
-                pre: ({ children }) => (
-                  <pre className="mb-3 overflow-x-auto rounded-lg border border-slate-800 bg-slate-950 p-3 text-xs">
-                    {children}
-                  </pre>
-                ),
-                img: ({ src, alt }) => (
-                  <img
-                    src={resolveImageSrc(src)}
-                    alt={alt}
-                    className="my-3 max-w-full rounded-lg border border-slate-800"
-                  />
-                ),
-                hr: () => <hr className="my-4 border-slate-800" />,
-              }}
-            >
-              {readmeContent}
-            </ReactMarkdown>
+            {renderBlocks(blocks)}
           </article>
         </div>
       )}
