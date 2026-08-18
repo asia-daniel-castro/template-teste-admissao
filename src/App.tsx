@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { LayoutDashboard, Building2, Settings, LogOut } from 'lucide-react';
+import { Building2, LogOut } from 'lucide-react';
+import logo from './assets/logo.png';
 
 function Avatar({ name }: { name: string }) {
   const initials = name
@@ -47,29 +48,19 @@ function LoginGate({ onLogin }: { onLogin: (name: string) => void }) {
 }
 
 function Sidebar() {
-  const items = [
-    { icon: LayoutDashboard, label: 'Dashboard' },
-    { icon: Building2, label: 'Empresas' },
-    { icon: Settings, label: 'Configurações' },
-  ];
   return (
     <aside className="h-screen w-16 bg-slate-950 border-r border-slate-800 flex flex-col items-center py-4 gap-6 shrink-0">
       <div className="relative">
-        <div className="h-9 w-9 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-700 flex items-center justify-center text-sm font-bold">
-          A
-        </div>
+        <img src={logo} alt="Logo" className="h-9 w-9 rounded-xl" />
         <div className="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full bg-emerald-400 ring-2 ring-slate-950" />
       </div>
       <nav className="flex flex-col gap-2 mt-2">
-        {items.map(({ icon: Icon, label }) => (
-          <button
-            key={label}
-            title={label}
-            className="h-10 w-10 rounded-lg flex items-center justify-center text-slate-400 hover:bg-slate-800 hover:text-white transition-colors"
-          >
-            <Icon className="h-4 w-4" />
-          </button>
-        ))}
+        <button
+          title="Consulta CNPJ"
+          className="h-10 w-10 rounded-lg flex items-center justify-center text-slate-400 hover:bg-slate-800 hover:text-white transition-colors"
+        >
+          <Building2 className="h-4 w-4" />
+        </button>
       </nav>
       <button
         title="Sair"
@@ -85,9 +76,7 @@ function TopBar({ userName }: { userName: string }) {
   return (
     <header className="h-14 border-b border-slate-800 bg-slate-950/95 flex items-center justify-between px-5 shrink-0">
       <div className="flex items-center gap-3">
-        <div className="h-6 w-6 rounded-md bg-gradient-to-br from-blue-500 to-indigo-700 flex items-center justify-center text-[10px] font-bold">
-          A
-        </div>
+        <img src={logo} alt="Logo" className="h-6 w-6 rounded-md" />
         <span className="text-sm font-medium text-slate-300">
           Plataforma de Teste
         </span>
